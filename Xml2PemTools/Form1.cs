@@ -39,9 +39,17 @@ namespace Xml2PemTools
                 case DialogResult.Cancel:
                     return;
             }
-            
 
-            saveFileDialog1.FileName = Path.GetFileNameWithoutExtension(openFileDialog1.FileName) + ".xml";
+            //保存文件名猜测
+            if (radioButton1.Checked)
+            {
+                saveFileDialog1.FileName = Path.GetFileNameWithoutExtension(openFileDialog1.FileName) + ".xml";
+            }
+            else
+            {
+                saveFileDialog1.FileName = "PublicKey.xml";
+            }
+            
             var saveDlgResult = saveFileDialog1.ShowDialog();
             switch (saveDlgResult)
             {
@@ -58,7 +66,7 @@ namespace Xml2PemTools
             }
             
 
-            Pem2XmlUtility.PemConvertToXml(openFileDialog1.FileName, saveFileDialog1.FileName);
+            Pem2XmlUtility.PemConvertToXml(openFileDialog1.FileName, saveFileDialog1.FileName, radioButton1.Checked);
             Process.Start("explorer.exe", "/SELECT," + saveFileDialog1.FileName);
         }
 
@@ -79,8 +87,16 @@ namespace Xml2PemTools
                     return;
             }
 
-
-            saveFileDialog2.FileName = Path.GetFileNameWithoutExtension(openFileDialog2.FileName) + ".pem";
+            //保存文件名猜测
+            if (radioButton1.Checked)
+            {
+                saveFileDialog2.FileName = Path.GetFileNameWithoutExtension(openFileDialog2.FileName) + ".pem";
+            }
+            else
+            {
+                saveFileDialog2.FileName = "PublicKey.pem";
+            }
+            
             var saveDlgResult = saveFileDialog2.ShowDialog();
             switch (saveDlgResult)
             {
@@ -96,7 +112,7 @@ namespace Xml2PemTools
                     return;
             }
 
-            Pem2XmlUtility.XmlConvertToPem(openFileDialog2.FileName, saveFileDialog2.FileName);
+            Pem2XmlUtility.XmlConvertToPem(openFileDialog2.FileName, saveFileDialog2.FileName, radioButton1.Checked);
             Process.Start("explorer.exe", "/SELECT," + saveFileDialog2.FileName);
         }
 

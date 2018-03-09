@@ -5,8 +5,7 @@ using Org.BouncyCastle.Math;
 
 namespace Org.BouncyCastle.Crypto.Parameters
 {
-    public class RsaPrivateCrtKeyParameters
-		: RsaKeyParameters
+    public class RsaPrivateCrtKeyParameters : RsaKeyParameters
     {
         private readonly BigInteger e, p, q, dP, dQ, qInv;
 

@@ -13,19 +13,32 @@ namespace Xml2PemTools
 {
     internal static class Pem2XmlUtility
     {
-        public static void XmlConvertToPem(string xmlPath, string pemPath)//XML格式密钥转PEM
+        public static void XmlConvertToPem(string xmlPath, string pemPath, bool generatePrivateKey = true)//XML格式密钥转PEM
         {
             var rsa2 = new RSACryptoServiceProvider();
-            using (var sr = new StreamReader(xmlPath))
-            {
-                rsa2.FromXmlString(sr.ReadToEnd());
-            }
-            var p = rsa2.ExportParameters(true);
+            rsa2.FromXmlString(File.ReadAllText(xmlPath));
+            var p = rsa2.ExportParameters(!rsa2.PublicOnly);
 
-            var key = new RsaPrivateCrtKeyParameters(
-                new BigInteger(1, p.Modulus), new BigInteger(1, p.Exponent), new BigInteger(1, p.D),
-                new BigInteger(1, p.P), new BigInteger(1, p.Q), new BigInteger(1, p.DP), new BigInteger(1, p.DQ),
-                new BigInteger(1, p.InverseQ));
+            //Public Key Convert to Private Key
+            if (rsa2.PublicOnly)
+            {
+                generatePrivateKey = false;
+            }
+
+            AsymmetricKeyParameter key = null;
+            if (generatePrivateKey)
+            {
+                //Private Key
+                key = new RsaPrivateCrtKeyParameters(
+                    new BigInteger(1, p.Modulus), new BigInteger(1, p.Exponent), new BigInteger(1, p.D),
+                    new BigInteger(1, p.P), new BigInteger(1, p.Q), new BigInteger(1, p.DP), new BigInteger(1, p.DQ),
+                    new BigInteger(1, p.InverseQ));
+            }
+            else
+            {
+                //Public key
+                key = new RsaKeyParameters(false, new BigInteger(1, p.Modulus), new BigInteger(1, p.Exponent)); //Public Key
+            }
 
             using (var sw = new StreamWriter(pemPath))
             {
@@ -34,31 +47,52 @@ namespace Xml2PemTools
             }
         }
 
-        public static void PemConvertToXml(string pemPath, string xmlPath)//PEM格式密钥转XML
+        public static void PemConvertToXml(string pemPath, string xmlPath, bool generatePrivateKey = true)//PEM格式密钥转XML
         {
-            AsymmetricCipherKeyPair keyPair;
-            using (var sr = new StreamReader(pemPath))
+            RSAParameters p;
+            using (var sr = File.OpenText(pemPath))
             {
                 var pemReader = new Org.BouncyCastle.OpenSsl.PemReader(sr);
-                keyPair = (AsymmetricCipherKeyPair)pemReader.ReadObject();
+                var obj = pemReader.ReadObject();
+                if (obj is RsaKeyParameters)
+                {
+                    var key = obj as RsaKeyParameters;
+                    p = new RSAParameters
+                    {
+                        Modulus = key.Modulus.ToByteArrayUnsigned(),
+                        Exponent = key.Exponent.ToByteArrayUnsigned()
+                    };
+
+                    //Public Key cant Convert To Private Key
+                    generatePrivateKey = false;
+                }
+                else if (obj is AsymmetricCipherKeyPair)
+                {
+                    var key = (obj as AsymmetricCipherKeyPair).Private as RsaPrivateCrtKeyParameters;
+                    p = new RSAParameters
+                    {
+                        Modulus = key.Modulus.ToByteArrayUnsigned(),
+                        Exponent = key.PublicExponent.ToByteArrayUnsigned(),
+                        D = key.Exponent.ToByteArrayUnsigned(),
+                        P = key.P.ToByteArrayUnsigned(),
+                        Q = key.Q.ToByteArrayUnsigned(),
+                        DP = key.DP.ToByteArrayUnsigned(),
+                        DQ = key.DQ.ToByteArrayUnsigned(),
+                        InverseQ = key.QInv.ToByteArrayUnsigned(),
+                    };
+                }
+                else
+                {
+                    throw new NotSupportedException("not support this pem");
+                }
             }
-            var key = (RsaPrivateCrtKeyParameters)keyPair.Private;
-            var p = new RSAParameters
-            {
-                Modulus = key.Modulus.ToByteArrayUnsigned(),
-                Exponent = key.PublicExponent.ToByteArrayUnsigned(),
-                D = key.Exponent.ToByteArrayUnsigned(),
-                P = key.P.ToByteArrayUnsigned(),
-                Q = key.Q.ToByteArrayUnsigned(),
-                DP = key.DP.ToByteArrayUnsigned(),
-                DQ = key.DQ.ToByteArrayUnsigned(),
-                InverseQ = key.QInv.ToByteArrayUnsigned(),
-            };
+            
             var rsa = new RSACryptoServiceProvider();
             rsa.ImportParameters(p);
             using (var sw = new StreamWriter(xmlPath))
             {
-                sw.Write(rsa.ToXmlString(true));
+                //True: PrivateKey, False PublicKey
+                sw.Write(rsa.ToXmlString(generatePrivateKey));
             }
         }
     }
