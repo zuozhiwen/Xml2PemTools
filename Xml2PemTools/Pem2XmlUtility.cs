@@ -89,11 +89,7 @@ namespace Xml2PemTools
             
             var rsa = new RSACryptoServiceProvider();
             rsa.ImportParameters(p);
-            using (var sw = new StreamWriter(xmlPath))
-            {
-                //True: PrivateKey, False PublicKey
-                sw.Write(rsa.ToXmlString(generatePrivateKey));
-            }
+            File.WriteAllText(xmlPath, rsa.ToXmlString(generatePrivateKey)); //True: PrivateKey, False PublicKey
         }
     }
 }
