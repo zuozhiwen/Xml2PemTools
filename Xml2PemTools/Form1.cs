@@ -116,6 +116,16 @@ namespace Xml2PemTools
             Process.Start("explorer.exe", "/SELECT," + saveFileDialog2.FileName);
         }
 
+        private void Form1_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            var rsa = new RSACryptoServiceProvider();
+            var xml = rsa.ToXmlString(true);
+            if(saveFileDialog3.ShowDialog() == DialogResult.OK)
+            {
+                File.WriteAllText(saveFileDialog3.FileName, xml);
+            }
+        }
+
         // ref https://www.jianshu.com/p/faefcc58c79b
         // in repo
     }

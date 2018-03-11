@@ -35,8 +35,9 @@
             this.openFileDialog2 = new System.Windows.Forms.OpenFileDialog();
             this.saveFileDialog2 = new System.Windows.Forms.SaveFileDialog();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.radioButton2 = new System.Windows.Forms.RadioButton();
             this.radioButton1 = new System.Windows.Forms.RadioButton();
+            this.radioButton2 = new System.Windows.Forms.RadioButton();
+            this.saveFileDialog3 = new System.Windows.Forms.SaveFileDialog();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -87,17 +88,6 @@
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "生成选项";
             // 
-            // radioButton2
-            // 
-            this.radioButton2.AutoSize = true;
-            this.radioButton2.Location = new System.Drawing.Point(187, 19);
-            this.radioButton2.Name = "radioButton2";
-            this.radioButton2.Size = new System.Drawing.Size(47, 16);
-            this.radioButton2.TabIndex = 0;
-            this.radioButton2.TabStop = true;
-            this.radioButton2.Text = "公钥";
-            this.radioButton2.UseVisualStyleBackColor = true;
-            // 
             // radioButton1
             // 
             this.radioButton1.AutoSize = true;
@@ -109,6 +99,22 @@
             this.radioButton1.TabStop = true;
             this.radioButton1.Text = "私钥";
             this.radioButton1.UseVisualStyleBackColor = true;
+            // 
+            // radioButton2
+            // 
+            this.radioButton2.AutoSize = true;
+            this.radioButton2.Location = new System.Drawing.Point(187, 19);
+            this.radioButton2.Name = "radioButton2";
+            this.radioButton2.Size = new System.Drawing.Size(47, 16);
+            this.radioButton2.TabIndex = 0;
+            this.radioButton2.TabStop = true;
+            this.radioButton2.Text = "公钥";
+            this.radioButton2.UseVisualStyleBackColor = true;
+            // 
+            // saveFileDialog3
+            // 
+            this.saveFileDialog3.FileName = "PrivateKey.xml";
+            this.saveFileDialog3.Filter = "xml文件|*.xml";
             // 
             // Form1
             // 
@@ -123,6 +129,7 @@
             this.Name = "Form1";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Xml<--->Pem Tools";
+            this.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.Form1_MouseDoubleClick);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.ResumeLayout(false);
@@ -140,6 +147,7 @@
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.RadioButton radioButton1;
         private System.Windows.Forms.RadioButton radioButton2;
+        private System.Windows.Forms.SaveFileDialog saveFileDialog3;
     }
 }
 
